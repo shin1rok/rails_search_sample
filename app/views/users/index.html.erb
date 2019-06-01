@@ -2,29 +2,63 @@
 
 <h1>Users</h1>
 
+<div class="search-form">
+  <%= form_with(model: @search_params, scope: :search, url: users_path, method: :get, local: true) do |f| %>
+    <div class="field">
+      <%= f.label :name %>
+      <%= f.text_field :name, value: @search_params[:name] %>
+    </div>
+
+    <div class="field">
+      <%= f.label :gender %>
+      <!--      TODO: I18n-->
+      <!--      TODO: helperにする-->
+      <!--      TODO: 1行が長いからdoにした方がいいかも。やってみて検討する-->
+      <%= f.collection_radio_buttons(:gender, User.genders, :first, :first) do |r| %>
+        <%= tag.div(class: 'form-check form-check-inline') { r.radio_button(checked: r.value == @search_params[:gender], class: 'form-check-input') + f.label(r.text, class: 'form-check-label') } %>
+      <% end %>
+    </div>
+
+    <div class="field">
+      <%= f.label :birthday %>
+      <%= f.date_field :birthday_from, value: @search_params[:birthday_from] %> ~ <%= f.date_field :birthday_to , value: @search_params[:birthday_to]%>
+    </div>
+
+    <div class="field">
+      <%= f.label :prefecture_id %>
+<!--      TODO: blankの値をI18n(https://qiita.com/sue738/items/4abef19826cc6287d923)-->
+      <%= f.collection_select(:prefecture_id, Prefecture.all, :id, :name, selected: @search_params[:prefecture_id], include_blank: '選択してください') %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit :search %>
+    </div>
+  <% end %>
+</div>
+
 <table>
   <thead>
-    <tr>
-      <th>Name</th>
-      <th>Gender</th>
-      <th>Birthday</th>
-      <th>Prefecture</th>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>Gender</th>
+    <th>Birthday</th>
+    <th>Prefecture</th>
+    <th colspan="3"></th>
+  </tr>
   </thead>
 
   <tbody>
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= user.name %></td>
-        <td><%= user.gender %></td>
-        <td><%= user.birthday %></td>
-        <td><%= user.prefecture.name %></td>
-        <td><%= link_to 'Show', user %></td>
-        <td><%= link_to 'Edit', edit_user_path(user) %></td>
-        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
+  <% @users.each do |user| %>
+    <tr>
+      <td><%= user.name %></td>
+      <td><%= user.gender %></td>
+      <td><%= user.birthday %></td>
+      <td><%= user.prefecture.name %></td>
+      <td><%= link_to 'Show', user %></td>
+      <td><%= link_to 'Edit', edit_user_path(user) %></td>
+      <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
   </tbody>
 </table>
 

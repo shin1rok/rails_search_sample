@@ -4,7 +4,8 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    @search_params = user_search_params
+    @users = User.search(@search_params).includes(:prefecture)
   end
 
   # GET /users/1
@@ -71,5 +72,9 @@ class UsersController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
     params.require(:user).permit(:name, :gender, :birthday, :prefecture_id)
+  end
+
+  def user_search_params
+    params.fetch(:search, {}).permit(:name, :gender, :birthday_from, :birthday_to, :prefecture_id)
   end
 end
